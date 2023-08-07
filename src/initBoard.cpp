@@ -1,6 +1,3 @@
-#ifndef INITBOARD_CPP
-#define INITBOARD_CPP
-
 #include "mine.hpp"
 #include <cstddef>
 #include <cstdlib>
@@ -115,4 +112,3 @@ cell **initBoard(const int x_size, const int y_size,
   }
   return board;
 }
-#endif

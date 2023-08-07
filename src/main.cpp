@@ -34,7 +34,7 @@ int main() {
   }
 
   cursor cur{0, 0};
-  bool stop{false}, losed{false}, won{false}, isFirstTurn{true};
+  bool stop{false}, losed{false}, won{false};
   int openedCells{0};
   while (true) {
     bool toOpen{false}, toFlag{false};
