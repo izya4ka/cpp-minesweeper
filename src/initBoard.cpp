@@ -26,7 +26,7 @@ cell **initBoard(const int xSize, const int ySize, const int minesNumber) {
   }
 
   for (int i = 0; i < minesNumber; i++) {
-    board[xDist(gen)][yDist(gen)].isMined = true;
+    board[yDist(gen)][xDist(gen)].isMined = true;
   }
 
   bool isXNearMinesFilled{false};
