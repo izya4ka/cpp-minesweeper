@@ -1,21 +1,20 @@
 #include "mine.hpp"
-#include <cstddef>
-#include <cstdlib>
-#include <ctime>
+#include <random>
 
+cell **initBoard(const int xSize, const int ySize, const int minesNumber) {
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<> xDist(0, xSize);
+  std::uniform_int_distribution<> yDist(0, ySize);
 
-cell **initBoard(const int x_size, const int y_size,
-                 const int mines_number) {
-  srand(time(NULL));
+  auto board = new cell *[ySize];
 
-  auto board = new cell *[y_size];
-
-  for (int i = 0; i < y_size; i++) {
-    board[i] = new cell[x_size];
+  for (int i = 0; i < ySize; i++) {
+    board[i] = new cell[xSize];
   }
 
-  for (int y = 0; y < y_size; y++) {
-    for (int x = 0; x < x_size; x++) {
+  for (int y = 0; y < ySize; y++) {
+    for (int x = 0; x < xSize; x++) {
       cell &c = board[y][x];
       c.x = x;
       c.y = y;
@@ -26,13 +25,13 @@ cell **initBoard(const int x_size, const int y_size,
     }
   }
 
-  for (int i = 0; i < mines_number; i++) {
-    board[rand() % y_size][rand() % x_size].isMined = true;
+  for (int i = 0; i < minesNumber; i++) {
+    board[xDist(gen)][yDist(gen)].isMined = true;
   }
 
   bool isXNearMinesFilled{false};
-  for (int y = 1; y < y_size - 1; y++) {
-    for (int x = 1; x < x_size - 1; x++) {
+  for (int y = 1; y < ySize - 1; y++) {
+    for (int x = 1; x < xSize - 1; x++) {
       if (!board[y][x].isMined) {
         for (int i = -1; i < 2; i++) {
           for (int j = -1; j < 2; j++) {
@@ -50,11 +49,11 @@ cell **initBoard(const int x_size, const int y_size,
             }
           }
         }
-        if (!board[y_size - 1][x].isMined) {
+        if (!board[ySize - 1][x].isMined) {
           for (int i = -1; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
-              if (board[y_size - 1 - j][x + i].isMined)
-                board[y_size - 1][x].minesNear++;
+              if (board[ySize - 1 - j][x + i].isMined)
+                board[ySize - 1][x].minesNear++;
             }
           }
         }
@@ -69,11 +68,11 @@ cell **initBoard(const int x_size, const int y_size,
         }
       }
     }
-    if (!board[y][x_size - 1].isMined) {
+    if (!board[y][xSize - 1].isMined) {
       for (int i = -1; i < 2; i++) {
         for (int j = 0; j < 2; j++) {
-          if (board[y + i][x_size - 1 - j].isMined)
-            board[y][x_size - 1].minesNear++;
+          if (board[y + i][xSize - 1 - j].isMined)
+            board[y][xSize - 1].minesNear++;
         }
       }
     }
@@ -86,27 +85,27 @@ cell **initBoard(const int x_size, const int y_size,
       }
     }
   }
-  if (!board[0][x_size - 1].isMined) {
+  if (!board[0][xSize - 1].isMined) {
     for (int i = 0; i < 2; i++) {
       for (int j = -1; j < 1; j++) {
-        if (board[i][x_size + j - 1].isMined)
-          board[0][x_size - 1].minesNear++;
+        if (board[i][xSize + j - 1].isMined)
+          board[0][xSize - 1].minesNear++;
       }
     }
   }
-  if (!board[y_size - 1][0].isMined) {
+  if (!board[ySize - 1][0].isMined) {
     for (int i = -1; i < 1; i++) {
       for (int j = 0; j < 2; j++) {
-        if (board[y_size + i - 1][j].isMined)
-          board[y_size - 1][0].minesNear++;
+        if (board[ySize + i - 1][j].isMined)
+          board[ySize - 1][0].minesNear++;
       }
     }
   }
-  if (!board[y_size - 1][x_size - 1].isMined) {
+  if (!board[ySize - 1][xSize - 1].isMined) {
     for (int i = -1; i < 1; i++) {
       for (int j = -1; j < 1; j++) {
-        if (board[y_size + i - 1][x_size + j - 1].isMined)
-          board[y_size - 1][x_size - 1].minesNear++;
+        if (board[ySize + i - 1][xSize + j - 1].isMined)
+          board[ySize - 1][xSize - 1].minesNear++;
       }
     }
   }
