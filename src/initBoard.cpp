@@ -4,8 +4,8 @@
 cell **initBoard(const int xSize, const int ySize, const int minesNumber) {
   std::random_device rd;
   std::mt19937 gen(rd());
-  std::uniform_int_distribution<> xDist(0, xSize);
-  std::uniform_int_distribution<> yDist(0, ySize);
+  std::uniform_int_distribution<> xDist(0, xSize-1);
+  std::uniform_int_distribution<> yDist(0, ySize-1);
 
   auto board = new cell *[ySize];
 

@@ -1,6 +1,7 @@
 #include "cursor.hpp"
 #include "functions.hpp"
 #include "mine.hpp"
+#include <curses.h>
 #include <iostream>
 #include <ncurses.h>
 
@@ -15,7 +16,6 @@ int main() {
   cin >> ySize;
   cout << "Введите количество мин: ";
   cin >> minesNumber;
-  system("clear");
 
   int openCellsToWin{xSize * ySize - minesNumber};
 
@@ -26,7 +26,7 @@ int main() {
   curs_set(0);
 
   init_pair(1, COLOR_WHITE, COLOR_BLACK);
-  init_pair(2, COLOR_WHITE, COLOR_CYAN);
+  init_pair(2, COLOR_BLACK, COLOR_CYAN);
   init_pair(3, COLOR_RED, COLOR_BLACK);
 
   auto board = initBoard(xSize, ySize, minesNumber);
@@ -37,7 +37,7 @@ int main() {
     }
   }
 
-  cursor cur{0, 0};
+  cursor cur{0, 0, 0, 0};
   bool stop{false}, losed{false}, won{false};
   int openedCells{0};
   while (true) {
@@ -104,11 +104,14 @@ int main() {
     auto &selected_cell = board[cur.y][cur.x];
 
     attrset(COLOR_PAIR(2));
-    if (selected_cell.isFlaged) mvaddch(cur.y, cur.x * 2, 'F');
-    else if (selected_cell.isOpened) mvaddch(cur.y, cur.x * 2, (char)(selected_cell.minesNear + 48));
-    else mvaddch(cur.y, cur.x * 2, '#');
+    if (selected_cell.isFlaged)
+      mvaddch(cur.y, cur.x * 2, 'F');
+    else if (selected_cell.isOpened)
+      mvaddch(cur.y, cur.x * 2, (char)(selected_cell.minesNear + 48));
+    else
+      mvaddch(cur.y, cur.x * 2, '#');
 
-    if (toFlag) {
+    if (toFlag && !selected_cell.isOpened) {
       selected_cell.isFlaged = !selected_cell.isFlaged;
       if (selected_cell.isFlaged) {
         attrset(COLOR_PAIR(2));
@@ -132,16 +135,15 @@ int main() {
 
   attrset(COLOR_PAIR(1));
 
-  char char_to_display;
-
   for (int y = 0; y < ySize; y++) {
     for (int x = 0; x < xSize * 2 - 1; x += 2) {
       cell current_cell = board[y][x / 2];
-      if (current_cell.isMined)
-        char_to_display = 'M';
-      else
-        char_to_display = (char)(current_cell.minesNear + 48);
-      mvaddch(y, x, char_to_display);
+      if (current_cell.isMined) {
+        attrset(COLOR_PAIR(3));
+        mvaddch(y, x, 'M');
+        attrset(COLOR_PAIR(1));
+      } else
+        mvaddch(y, x, (char)(current_cell.minesNear + 48));
     }
   }
 
