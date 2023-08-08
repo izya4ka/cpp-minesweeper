@@ -25,6 +25,10 @@ int main() {
   noecho();
   curs_set(0);
 
+  init_pair(1, COLOR_WHITE, COLOR_BLACK);
+  init_pair(2, COLOR_WHITE, COLOR_CYAN);
+  init_pair(3, COLOR_RED, COLOR_BLACK);
+
   auto board = initBoard(xSize, ySize, minesNumber);
 
   for (int y = 0; y < ySize; y++) {
@@ -90,19 +94,27 @@ int main() {
 
     if (previousCell.isOpened)
       mvaddch(cur.prevY, cur.prevX * 2, (char)(previousCell.minesNear + 48));
-    else if (previousCell.isFlaged)
+    else if (previousCell.isFlaged) {
+      attrset(COLOR_PAIR(3));
       mvaddch(cur.prevY, cur.prevX * 2, 'F');
-    else
+      attrset(COLOR_PAIR(1));
+    } else
       mvaddch(cur.prevY, cur.prevX * 2, '#');
-
-    mvaddch(cur.y, cur.x * 2, '*');
 
     auto &selected_cell = board[cur.y][cur.x];
 
+    attrset(COLOR_PAIR(2));
+    if (selected_cell.isFlaged) mvaddch(cur.y, cur.x * 2, 'F');
+    else if (selected_cell.isOpened) mvaddch(cur.y, cur.x * 2, (char)(selected_cell.minesNear + 48));
+    else mvaddch(cur.y, cur.x * 2, '#');
+
     if (toFlag) {
       selected_cell.isFlaged = !selected_cell.isFlaged;
-      if (selected_cell.isFlaged)
+      if (selected_cell.isFlaged) {
+        attrset(COLOR_PAIR(2));
         mvaddch(cur.y, cur.x * 2, 'F');
+        attrset(COLOR_PAIR(1));
+      }
     }
 
     if (toOpen && !selected_cell.isFlaged) {
@@ -115,7 +127,10 @@ int main() {
       }
       mvaddch(cur.y, cur.x * 2, (char)(selected_cell.minesNear + 48));
     }
+    attrset(COLOR_PAIR(1));
   }
+
+  attrset(COLOR_PAIR(1));
 
   char char_to_display;
 
