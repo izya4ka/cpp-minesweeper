@@ -1,23 +1,42 @@
 #include "cursor.hpp"
+#include "difficulty.hpp"
 #include "functions.hpp"
 #include "mine.hpp"
-#include <curses.h>
+#include <array>
 #include <iostream>
 #include <ncurses.h>
 
 using std::cin;
 using std::cout;
+using std::endl;
+
+const std::array<difficulty, 3> difficultyArray = {
+    {{10, 10, 15}, {15, 15, 30}, {20, 20, 60}},
+};
 
 int main() {
-  int xSize{10}, ySize{10}, minesNumber{5};
-  cout << "Введите размер поля по высоте (в клетках): ";
-  cin >> xSize;
-  cout << "Введите размер поля по ширине (в клетках): ";
-  cin >> ySize;
-  cout << "Введите количество мин: ";
-  cin >> minesNumber;
 
-  int openCellsToWin{xSize * ySize - minesNumber};
+  cout << "Выберите сложность: " << endl;
+  cout << "0 - лёгко" << endl;
+  cout << "1 - нормально" << endl;
+  cout << "2 - сложно" << endl;
+  int difficultyChoice{-1};
+
+  while (!(difficultyChoice >= 0 && difficultyChoice < 3)) {
+    cin >> difficultyChoice;
+    if (cin.fail()) {
+      cin.clear();
+      cin.ignore(999, '\n');
+      difficultyChoice = -1;
+      cout << "Введите число от 0 до 2: ";
+    }
+  }
+
+  const auto &xSize{difficultyArray[difficultyChoice].columns},
+      &ySize{difficultyArray[difficultyChoice].rows},
+      &minesNumber{difficultyArray[difficultyChoice].minesCount};
+
+  const int openCellsToWin{xSize * ySize - minesNumber};
 
   initscr();
   start_color();
@@ -151,8 +170,8 @@ int main() {
     printw("\nYou won!");
   if (losed)
     printw("\nYou losed!");
-  printw("\nPress any key...");
   getch();
+
   endwin();
 
   for (int i = 0; i < ySize; i++) {
