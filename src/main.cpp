@@ -3,6 +3,7 @@
 #include "functions.hpp"
 #include "mine.hpp"
 #include <array>
+#include <curses.h>
 #include <iostream>
 #include <ncurses.h>
 
@@ -38,6 +39,8 @@ int main() {
 
   const int openCellsToWin{xSize * ySize - minesNumber};
 
+  const auto board = initBoard(xSize, ySize, minesNumber);
+  
   initscr();
   start_color();
   keypad(stdscr, TRUE);
@@ -48,7 +51,6 @@ int main() {
   init_pair(2, COLOR_BLACK, COLOR_CYAN);
   init_pair(3, COLOR_RED, COLOR_BLACK);
 
-  auto board = initBoard(xSize, ySize, minesNumber);
 
   for (int y = 0; y < ySize; y++) {
     for (int x = 0; x < xSize * 2 - 1; x += 2) {
@@ -69,28 +71,28 @@ int main() {
       break;
 
     switch (getch()) {
-    case 259: // Вверх
+    case KEY_UP:
       cur.prevY = cur.y;
       cur.prevX = cur.x;
       cur.y--;
       if (cur.y < 0)
         cur.y = ySize - 1;
       break;
-    case 258: // Вниз
+    case KEY_DOWN:
       cur.prevY = cur.y;
       cur.prevX = cur.x;
       cur.y++;
       if (cur.y > (ySize - 1))
         cur.y = 0;
       break;
-    case 260: // Влево
+    case KEY_LEFT:
       cur.prevX = cur.x;
       cur.prevY = cur.y;
       cur.x--;
       if (cur.x < 0)
         cur.x = xSize - 1;
       break;
-    case 261: // Вправо
+    case KEY_RIGHT:
       cur.prevX = cur.x;
       cur.prevY = cur.y;
       cur.x++;
@@ -112,7 +114,7 @@ int main() {
     auto previousCell = board[cur.prevY][cur.prevX];
 
     if (previousCell.isOpened)
-      mvaddch(cur.prevY, cur.prevX * 2, (char)(previousCell.minesNear + 48));
+      mvaddch(cur.prevY, cur.prevX * 2, (char)(previousCell.minesNear + '0'));
     else if (previousCell.isFlaged) {
       attrset(COLOR_PAIR(3));
       mvaddch(cur.prevY, cur.prevX * 2, 'F');
@@ -126,7 +128,7 @@ int main() {
     if (selected_cell.isFlaged)
       mvaddch(cur.y, cur.x * 2, 'F');
     else if (selected_cell.isOpened)
-      mvaddch(cur.y, cur.x * 2, (char)(selected_cell.minesNear + 48));
+      mvaddch(cur.y, cur.x * 2, (char)(selected_cell.minesNear + '0'));
     else
       mvaddch(cur.y, cur.x * 2, '#');
 
@@ -147,7 +149,7 @@ int main() {
         losed = true;
         continue;
       }
-      mvaddch(cur.y, cur.x * 2, (char)(selected_cell.minesNear + 48));
+      mvaddch(cur.y, cur.x * 2, (char)(selected_cell.minesNear + '0'));
     }
     attrset(COLOR_PAIR(1));
   }
@@ -162,7 +164,7 @@ int main() {
         mvaddch(y, x, 'M');
         attrset(COLOR_PAIR(1));
       } else
-        mvaddch(y, x, (char)(current_cell.minesNear + 48));
+        mvaddch(y, x, (char)(current_cell.minesNear + '0'));
     }
   }
 
