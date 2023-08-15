@@ -4,8 +4,8 @@
 struct cursor {
   int x;
   int y;
-  int prevX;
-  int prevY;
+  int prev_x;
+  int prev_y;
 };
 
 #endif

@@ -4,7 +4,7 @@
 struct difficulty {
   int rows;
   int columns;
-  int minesCount;
+  int mines_count;
 };
 
 #endif
