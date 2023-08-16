@@ -1,8 +1,9 @@
 #include "cell.hpp"
-#include "difficulty.hpp"
 #include "cursor.hpp"
+#include "difficulty.hpp"
 #include "functions.hpp"
 #include <array>
+#include <functional>
 #include <ncurses.h>
 
 const std::array<difficulty, 3> difficulty_array{
@@ -23,15 +24,12 @@ int main() {
   init_pair(1, COLOR_WHITE, COLOR_BLACK);
   init_pair(2, COLOR_BLACK, COLOR_CYAN);
   init_pair(3, COLOR_RED, COLOR_BLACK);
-  init_pair(4, COLOR_BLACK, COLOR_WHITE);
 
   int difficulty_choice{};
 
-  printw("Choose difficulty\n");
+  printw("Choose difficulty:\n");
 
-  attrset(COLOR_PAIR(4));
-  printw("%s\n", difficulty_names[0]);
-  attrset(COLOR_PAIR(1));
+  colored_output([] { printw("%s\n", difficulty_names[0]); }, 2);
   printw("%s\n", difficulty_names[1]);
   printw("%s\n", difficulty_names[2]);
 
@@ -59,7 +57,7 @@ int main() {
     move(1, 0);
     for (int i = 0; i < 3; i++) {
       if (i == difficulty_choice) {
-        attrset(COLOR_PAIR(4));
+        attrset(COLOR_PAIR(2));
       }
       printw("%s\n", difficulty_names[i]);
       attrset(COLOR_PAIR(1));
@@ -139,11 +137,10 @@ int main() {
     auto previousCell = board[cur.prev_y][cur.prev_x];
 
     if (previousCell.is_opened)
-      mvaddch(cur.prev_y, cur.prev_x * 2, (char)(previousCell.mines_near + '0'));
+      mvaddch(cur.prev_y, cur.prev_x * 2,
+              (char)(previousCell.mines_near + '0'));
     else if (previousCell.is_flagged) {
-      attrset(COLOR_PAIR(3));
-      mvaddch(cur.prev_y, cur.prev_x * 2, 'F');
-      attrset(COLOR_PAIR(1));
+      colored_output([cur]() { mvaddch(cur.prev_y, cur.prev_x * 2, 'F'); }, 3);
     } else
       mvaddch(cur.prev_y, cur.prev_x * 2, '#');
 
@@ -160,9 +157,7 @@ int main() {
     if (to_flag && !selected_cell.is_opened) {
       selected_cell.is_flagged = !selected_cell.is_flagged;
       if (selected_cell.is_flagged) {
-        attrset(COLOR_PAIR(2));
-        mvaddch(cur.y, cur.x * 2, 'F');
-        attrset(COLOR_PAIR(1));
+        colored_output([cur] { mvaddch(cur.y, cur.x * 2, 'F'); }, 2);
       }
     }
 
@@ -185,9 +180,7 @@ int main() {
     for (int x = 0; x < x_size * 2 - 1; x += 2) {
       cell current_cell = board[y][x / 2];
       if (current_cell.is_mined) {
-        attrset(COLOR_PAIR(3));
-        mvaddch(y, x, 'M');
-        attrset(COLOR_PAIR(1));
+        colored_output([=] { mvaddch(y, x, 'M'); }, 3);
       } else
         mvaddch(y, x, (char)(current_cell.mines_near + '0'));
     }
@@ -195,8 +188,10 @@ int main() {
 
   if (won)
     printw("\nYou won!");
-  if (losed)
+  else if (losed)
     printw("\nYou losed!");
+  else
+    printw("\nYou gave up!");
   getch();
 
   endwin();
