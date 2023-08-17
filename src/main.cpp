@@ -25,17 +25,19 @@ int main() {
   init_pair(2, COLOR_BLACK, COLOR_CYAN);
   init_pair(3, COLOR_RED, COLOR_BLACK);
 
-  int difficulty_choice{};
-
   printw("Choose difficulty:\n");
-
   colored_output([] { printw("%s\n", difficulty_names[0]); }, 2);
   printw("%s\n", difficulty_names[1]);
   printw("%s\n", difficulty_names[2]);
+  printw("\nArrows - control cursor\n");
+  printw("F - flag/unflag cell\n");
+  printw("ESC - stop game\n");
 
   bool is_difficulty_chosen{};
+  int difficulty_choice{};
 
-  while (true) {
+  while (!is_difficulty_chosen) {
+
     switch (getch()) {
     case KEY_UP:
       difficulty_choice--;
@@ -47,14 +49,14 @@ int main() {
       is_difficulty_chosen = true;
       break;
     }
-    if (is_difficulty_chosen)
-      break;
+
     if (difficulty_choice > 2)
       difficulty_choice = 0;
     else if (difficulty_choice < 0)
       difficulty_choice = 2;
 
     move(1, 0);
+
     for (int i = 0; i < 3; i++) {
       if (i == difficulty_choice) {
         attrset(COLOR_PAIR(2));
@@ -84,40 +86,33 @@ int main() {
   cursor cur{0, 0, 0, 0};
   bool stop{false}, losed{false}, won{false};
   int opened_cells{0};
-  while (true) {
+
+  while (!stop && !losed && !won) {
     bool to_open{false}, to_flag{false};
 
     if (opened_cells == open_cells_to_win)
       won = true;
 
-    if (stop || losed || won)
-      break;
+    cur.prev_y = cur.y;
+    cur.prev_x = cur.x;
 
     switch (getch()) {
     case KEY_UP:
-      cur.prev_y = cur.y;
-      cur.prev_x = cur.x;
       cur.y--;
       if (cur.y < 0)
         cur.y = y_size - 1;
       break;
     case KEY_DOWN:
-      cur.prev_y = cur.y;
-      cur.prev_x = cur.x;
       cur.y++;
       if (cur.y > (y_size - 1))
         cur.y = 0;
       break;
     case KEY_LEFT:
-      cur.prev_x = cur.x;
-      cur.prev_y = cur.y;
       cur.x--;
       if (cur.x < 0)
         cur.x = x_size - 1;
       break;
     case KEY_RIGHT:
-      cur.prev_x = cur.x;
-      cur.prev_y = cur.y;
       cur.x++;
       if (cur.x > (x_size - 1))
         cur.x = 0;
