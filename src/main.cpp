@@ -138,7 +138,7 @@ int main() {
 
     if (previousCell.is_opened)
       mvaddch(cur.prev_y, cur.prev_x * 2,
-              (char)(previousCell.mines_near + '0'));
+              static_cast<char>(previousCell.mines_near + '0'));
     else if (previousCell.is_flagged) {
       colored_output([cur]() { mvaddch(cur.prev_y, cur.prev_x * 2, 'F'); }, 3);
     } else
@@ -150,7 +150,7 @@ int main() {
     if (selected_cell.is_flagged)
       mvaddch(cur.y, cur.x * 2, 'F');
     else if (selected_cell.is_opened)
-      mvaddch(cur.y, cur.x * 2, (char)(selected_cell.mines_near + '0'));
+      mvaddch(cur.y, cur.x * 2, static_cast<char>(selected_cell.mines_near + '0'));
     else
       mvaddch(cur.y, cur.x * 2, '#');
 
@@ -169,7 +169,7 @@ int main() {
         losed = true;
         continue;
       }
-      mvaddch(cur.y, cur.x * 2, (char)(selected_cell.mines_near + '0'));
+      mvaddch(cur.y, cur.x * 2, static_cast<char>(selected_cell.mines_near + '0'));
     }
     attrset(COLOR_PAIR(1));
   }
@@ -182,7 +182,7 @@ int main() {
       if (current_cell.is_mined) {
         colored_output([=] { mvaddch(y, x, 'M'); }, 3);
       } else
-        mvaddch(y, x, (char)(current_cell.mines_near + '0'));
+        mvaddch(y, x, static_cast<char>(current_cell.mines_near + '0'));
     }
   }
 
