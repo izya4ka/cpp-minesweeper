@@ -73,7 +73,7 @@ int main() {
 
   const int open_cells_to_win{x_size * y_size - mines_number};
 
-  const auto board = init_board(x_size, y_size, mines_number);
+  auto board = init_board(x_size, y_size, mines_number);
 
   for (int y = 0; y < y_size; y++) {
     for (int x = 0; x < x_size * 2 - 1; x += 2) {
@@ -195,9 +195,4 @@ int main() {
   getch();
 
   endwin();
-
-  for (int i = 0; i < y_size; i++) {
-    delete[] board[i];
-  }
-  delete[] board;
 }
