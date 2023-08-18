@@ -1,3 +1,4 @@
+#include "functions.hpp"
 #include <functional>
 #include <ncurses.h>
 

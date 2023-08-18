@@ -1,4 +1,5 @@
 #include "cell.hpp"
+#include "functions.hpp"
 #include <random>
 #include <stdexcept>
 #include <vector>
