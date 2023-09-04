@@ -1,4 +1,4 @@
-# cpp-minesweeper
+# minesweeper-cpp
 Simple minesweeper game written in C++ with NCurses!
 # Requirements
 ## For using
